@@ -1,14 +1,14 @@
 // todo ---> "@langchain/qdrant": "0.1.1",
 
 import * as Neo4jModule  from "@langchain/community/vectorstores/neo4j_vector";
-import { INodeProperties } from "n8n-workflow";
+import { IExecuteFunctions, INodeProperties, ISupplyDataFunctions } from "n8n-workflow";
 
 import { createVectorStoreNode } from "./createVectorStoreNode";
 import { name } from "../../../common-utils";
 //import { Document } from "@langchain/core/documents";
 //import { Neo4jCredentials } from "../../../credentials/Neo4jCredentialsApi.credentials";
 
-console.log(Neo4jModule);
+// console.log(Neo4jModule);
 
 
 const embeddingField: INodeProperties = {
@@ -20,17 +20,47 @@ const embeddingField: INodeProperties = {
 	required: true,
 };
 
+const labelField: INodeProperties = {
+	displayName: 'Label',
+	name: 'label',
+	type: 'string',
+	default: 'Document',
+	description: 'The label of the node to store the embedding',
+	placeholder: 'Document',
+}
+
+const textField: INodeProperties = {
+	displayName: 'Text',
+	name: 'text',
+	type: 'string',
+	default: 'embedding',
+	description: 'The field with the text to store',
+	placeholder: 'embedding',
+}
+
+const indexNameField: INodeProperties = {
+	displayName: 'Index Name',
+	name: 'indexName',
+	type: 'string',
+	default: 'vector',
+	description: 'The name of the index to use',
+	placeholder: 'vector',
+}
+
 // TODO - check if correct
 // todo - CHECK if more fields are needed
 const sharedFields: INodeProperties[] = [
-	{
-		displayName: 'Label name',
-		name: 'tableName',
-		type: 'string',
-		default: 'n8n_vectors',
-		description:
-			'The table name to store the vectors in. If table does not exist, it will be created.',
-	},
+	labelField,
+	textField,
+	indexNameField,
+	// {
+	// 	displayName: 'Label name',
+	// 	name: 'labelName',
+	// 	type: 'string',
+	// 	default: 'Document',
+	// 	description:
+	// 		'The table name to store the vectors in. If table does not exist, it will be created.',
+	// },
 	embeddingField
 ];
 
@@ -64,7 +94,31 @@ const insertFields: INodeProperties[] = [
 	},
 ];
 
-class Neo4jVectorStoreExtended extends Neo4jModule.Neo4jVectorStore {
+
+const getNeo4jCredential = async (context: IExecuteFunctions | ISupplyDataFunctions): Promise<Neo4jVectorStoreArgs> => {
+	const credentials = await context.getCredentials<Neo4jVectorStoreArgs>(name);
+	credentials.url = credentials.url.replace('localhost', '127.0.0.1');
+	return credentials;
+}
+
+const getNeo4jCommonParameters = async (context: IExecuteFunctions | ISupplyDataFunctions, itemIndex: number): Promise<any> => {
+
+	const credentials = await getNeo4jCredential(context);// context.getCredentials<Neo4jVectorStoreArgs>(name);
+	//credentials.url = credentials.url.replace('localhost', '127.0.0.1');
+	// return credentials;
+
+	const embeddingFieldName = context.getNodeParameter('embedding', itemIndex, 'embedding') as string;
+
+	const label = context.getNodeParameter('labelName', itemIndex, 'Document') as string;
+
+	const textNodeProperty = context.getNodeParameter('textNodeProperty', itemIndex, 'text') as string;
+
+	const indexName = context.getNodeParameter('indexName', itemIndex, 'vector') as string;
+
+	return {credentials, embeddingFieldName, label, textNodeProperty, indexName};
+}
+
+export class Neo4jVectorStoreExtended extends Neo4jModule.Neo4jVectorStore {
      // Define the serializable keys
 //   lc_serializable_keys = [
 //     'url',
@@ -122,7 +176,7 @@ export class VectorStoreNeo4j extends createVectorStoreNode<Neo4jVectorStoreExte
 			// Optional: implement search listing support if needed
 		},
 	},
-	async getVectorStoreClient(context, _filter, embeddings, itemIndex): Promise<Neo4jVectorStoreExtended> {
+	async getVectorStoreClient(context, _filter, embeddings, itemIndex): Promise<Neo4jModule.Neo4jVectorStore> {
 		// const credentials = await context.getCredentials<{
 		// 	url: string;
 		// 	username: string;
@@ -131,7 +185,10 @@ export class VectorStoreNeo4j extends createVectorStoreNode<Neo4jVectorStoreExte
 		// }>(name);
 
 		console.log('context..');
-		const credentials = await context.getCredentials<Neo4jVectorStoreArgs>(name);
+
+		const params = await getNeo4jCommonParameters(context, itemIndex);
+		console.log(params.credentials, 'params.credentials');
+		// const credentials = await context.getCredentials<Neo4jVectorStoreArgs>(name);
 
 		// const options =
 		// (context.getNodeParameter('options', itemIndex) as {
@@ -139,22 +196,63 @@ export class VectorStoreNeo4j extends createVectorStoreNode<Neo4jVectorStoreExte
 		// }) || {};
 
 		// TODO - common
-		credentials.url = credentials.url.replace('localhost', '127.0.0.1');
-		console.log('credentials', credentials);
-		const embeddingFieldName = context.getNodeParameter('embedding', itemIndex, '', {
+		// credentials.url = credentials.url.replace('localhost', '127.0.0.1');
+		// console.log('credentials', credentials);
+/* 		const embeddingFieldName = context.getNodeParameter('embedding', itemIndex, '', {
 			extractValue: true,
-		}) as string;
+		}) as string; */
 
 		// const driver = Neo4jVectorStoreExtended.prototype._initializeDriver(credentials);
 
-		return new Neo4jVectorStoreExtended(embeddings,
-			{...credentials,
-			indexName: 'n8n_index', // optionally customizable via a node parameter
-			nodeLabel: 'Document', // default label
-			textNodeProperty: 'text',
-			embeddingNodeProperty: embeddingFieldName,
+
+		// const store = await new Neo4jModule.Neo4jVectorStore(embeddings,
+		// 	{...params.credentials,
+		// 	indexName: params.indexName,//'n8n_index', // optionally customizable via a node parameter
+		// 	nodeLabel: params.label,//'Document', // default label
+		// 	textNodeProperty: params.textNodeProperty,//'text',
+		// 	embeddingNodeProperty: params.embeddingFieldName,
+		// 	// TODO
+		// 	retrievalQuery: 'RETURN 1',
+		// 	//driver: Neo4jVectorStoreExtended.prototype._initializeDriver(params.credentials),
+		// 	//embeddingDimension: options.embeddingDimensions ?? 1536,
+		// })
+		// console.log('store...');
+
+
+		const store = await Neo4jModule.Neo4jVectorStore.initialize(embeddings,
+			{...params.credentials,
+			indexName: params.indexName,//'n8n_index', // optionally customizable via a node parameter
+			nodeLabel: params.label,//'Document', // default label
+			textNodeProperty: params.textNodeProperty,//'text',
+			embeddingNodeProperty: params.embeddingFieldName,
+			// TODO
+			// retrievalQuery: 'RETURN 1',
+			//driver: Neo4jVectorStoreExtended.prototype._initializeDriver(params.credentials),
 			//embeddingDimension: options.embeddingDimensions ?? 1536,
-		});
+		})
+
+		
+		await store._initializeDriver(params.credentials);
+
+		// store['retrievalQuery'] = 'RETURN 1';
+		// store['indexName'] = params.indexName;
+		// store['nodeLabel'] = params.label;
+		// store['textNodeProperty'] = params.textNodeProperty;
+		// //store['username'] = params.credentials.username;
+		// //store['password'] = params.credentials.password;
+		// store['database'] = params.credentials.database;
+		// store['embeddingNodeProperty'] = params.embeddingFieldName;
+		// store['embeddingDimension'] = 1536;
+
+		await store['retrievalQuery'];
+
+		// Neo4jVectorStoreExtended.initialize()
+		// store.
+		console.log('store1...', store['retrievalQuery']);
+
+		//store.asRetriever().sear
+		// await console.log('session......', await store['driver']);// = Neo4jVectorStoreExtended.prototype._initializeDriver(params.credentials).session({
+		return await store;
 	},
 
 	async populateVectorStore(context, embeddings, documents, itemIndex): Promise<void> {

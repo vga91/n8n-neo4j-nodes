@@ -35,6 +35,7 @@ import { NodeOperationMode, VectorStoreNodeConstructorArgs } from './types';
 import { getOperationModeOptions, transformDescriptionForOperationMode } from '../../utils/utils';
 import { handleInsertOperation, handleLoadOperation, handleRetrieveOperation, handleUpdateOperation } from '../../operations';
 import { handleRetrieveAsToolOperation } from '../../operations/retrieveAsToolOperation';
+import { Neo4jVectorStore } from '@langchain/community/vectorstores/neo4j_vector';
 
 
 
@@ -244,7 +245,7 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 		 */
 		async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 
-			// todo ???? - check others, doesn't connect to neo4j
+			// todo ???? - check others, doesn't connect
 
 			const mode = this.getNodeParameter('mode', 0) as NodeOperationMode;
 
@@ -260,7 +261,7 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 				const resultData = [];
 
 				for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
-					const docs = await handleLoadOperation(this, args, embeddings, itemIndex);
+					const docs = await handleLoadOperation(this, (args as unknown as VectorStoreNodeConstructorArgs<Neo4jVectorStore>), embeddings, itemIndex);
 					resultData.push(...docs);
 				}
 
