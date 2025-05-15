@@ -3,7 +3,7 @@ import type { VectorStore } from '@langchain/core/vectorstores';
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 
 
-import type { VectorStoreNodeConstructorArgs } from '../types';
+import type { VectorStoreNodeConstructorArgs } from '../vector_store/VectorStoreNeo4j/types';
 import { getMetadataFiltersValues, logAiEvent } from '../utils/utils';
 
 /**

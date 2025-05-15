@@ -37,7 +37,9 @@
       "dist/credentials/HttpBinApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/VectorStoreNeo4j/VectorStoreNeo4j.node.js",
+      "dist/nodes/vector_store/VectorStoreNeo4j/VectorStoreNeo4j.node.js",
+      "dist/nodes/memory/MemoryNeo4jChat.node.js",
+
       "dist/nodes/HttpBin/HttpBin.node.js"
     ]
   },

@@ -7,9 +7,9 @@ import { NodeOperationError } from 'n8n-workflow';
 // import { N8nJsonLoader } from '@utils/N8nJsonLoader';
 
 //import { processDocument } from '../../processDocuments';
-import type { VectorStoreNodeConstructorArgs } from '../types';
+import type { VectorStoreNodeConstructorArgs } from '../vector_store/VectorStoreNeo4j/types';
 import { isUpdateSupported, logAiEvent, N8nJsonLoader } from '../utils/utils';
-import { processDocument } from '../processDocuments';
+import { processDocument } from '../vector_store/VectorStoreNeo4j/processDocuments';
 //import { isUpdateSupported } from './utils';
 
 /**
@@ -61,8 +61,13 @@ export async function handleUpdateOperation<T extends VectorStore = VectorStore>
 				throw new NodeOperationError(context.getNode(), 'Single document per item expected');
 			}
 
+			console.log('processedDocuments', processedDocuments);
+			console.log('serializedDocuments', serializedDocuments);
+			// Validate that we have exactly one document to update
+
 			// Add the serialized document to the result
 			resultData.push(...serializedDocuments);
+			console.log('resultData', resultData);
 
 			// Use document ID to update the existing document
 			await vectorStore.addDocuments(processedDocuments, {

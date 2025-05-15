@@ -32,8 +32,9 @@ import type {
 
 import { getConnectionHintNoticeField } from './sharedFields';
 import { NodeOperationMode, VectorStoreNodeConstructorArgs } from './types';
-import { getOperationModeOptions, transformDescriptionForOperationMode } from './utils/utils';
-import { handleInsertOperation, handleLoadOperation, handleRetrieveOperation, handleUpdateOperation } from './operations';
+import { getOperationModeOptions, transformDescriptionForOperationMode } from '../../utils/utils';
+import { handleInsertOperation, handleLoadOperation, handleRetrieveOperation, handleUpdateOperation } from '../../operations';
+import { handleRetrieveAsToolOperation } from '../../operations/retrieveAsToolOperation';
 
 
 
@@ -49,8 +50,9 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 ) =>
 	class VectorStoreNodeType implements INodeType {
 		description: INodeTypeDescription = {
-			displayName: "test display name",
-			name: "test name",
+			usableAsTool: true,
+			displayName: args.meta.displayName,
+			name: args.meta.name,
 			description: args.meta.description,
 			icon: args.meta.icon,
 			iconColor: args.meta.iconColor,
@@ -79,7 +81,7 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 			inputs: `={{
 			((parameters) => {
 				const mode = parameters?.mode;
-				const inputs = [{ displayName: "Embedding", type: "${NodeConnectionType.AiEmbedding}", required: true, maxConnections: 1}]
+				const inputs = [{ displayName: "TODO embedding", type: "${NodeConnectionType.AiEmbedding}", required: true, maxConnections: 1}]
 
 				if (mode === 'retrieve-as-tool') {
 					return inputs;
@@ -241,6 +243,9 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 		 * Supports 'load', 'insert', and 'update' operation modes
 		 */
 		async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+
+			// todo ???? - check others, doesn't connect to neo4j
+
 			const mode = this.getNodeParameter('mode', 0) as NodeOperationMode;
 
 			// Get the embeddings model connected to this node
@@ -297,9 +302,9 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 			}
 
 			// TODO - check this
-			// if (mode === 'retrieve-as-tool') {
-			// 	return await handleRetrieveAsToolOperation(this, args, embeddings, itemIndex);
-			// }
+			if (mode === 'retrieve-as-tool') {
+				return await handleRetrieveAsToolOperation(this, args, embeddings, itemIndex);
+			}
 
 			throw new NodeOperationError(
 				this.getNode(),

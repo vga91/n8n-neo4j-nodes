@@ -1,8 +1,8 @@
-import { AiEvent, BINARY_ENCODING, IBinaryData, IDataObject, IExecuteFunctions, INodeExecutionData, INodeProperties, INodePropertyOptions, ISupplyDataFunctions, jsonStringify, NodeConnectionType } from 'n8n-workflow';
+import { AiEvent, BINARY_ENCODING, IBinaryData, IDataObject, IExecuteFunctions, INodeExecutionData, INodeProperties, INodePropertyOptions, ISupplyDataFunctions, IWebhookFunctions, jsonStringify, NodeConnectionType } from 'n8n-workflow';
 //import { DEFAULT_OPERATION_MODES, OPERATION_MODE_DESCRIPTIONS } from './constants';
 //import type { NodeOperationMode, VectorStoreNodeConstructorArgs } from './types';
 import type { VectorStore } from '@langchain/core/vectorstores';
-import { NodeOperationMode, VectorStoreNodeConstructorArgs } from '../types';
+import { NodeOperationMode, VectorStoreNodeConstructorArgs } from '../vector_store/VectorStoreNeo4j/types';
 import type { TextSplitter } from '@langchain/textsplitters';
 import { Document } from '@langchain/core/documents';
 import { JSONLoader } from 'langchain/document_loaders/fs/json';
@@ -18,6 +18,49 @@ import { file as tmpFile, type DirectoryResult } from 'tmp-promise';
 import { pipeline } from 'stream/promises';
 
 // helpers
+export function getSessionId(
+	ctx: ISupplyDataFunctions | IWebhookFunctions,
+	itemIndex: number,
+	selectorKey = 'sessionIdType',
+	autoSelect = 'fromInput',
+	customKey = 'sessionKey',
+) {
+	// TODO - restore 
+
+	// let sessionId = '';
+	// const selectorType = ctx.getNodeParameter(selectorKey, itemIndex) as string;
+
+	// if (selectorType === autoSelect) {
+	// 	// If memory node is used in webhook like node(like chat trigger node), it doesn't have access to evaluateExpression
+	// 	// so we try to extract sessionId from the bodyData
+	// 	if ('getBodyData' in ctx) {
+	// 		const bodyData = ctx.getBodyData() ?? {};
+	// 		sessionId = bodyData.sessionId as string;
+	// 	} else {
+	// 		sessionId = ctx.evaluateExpression('{{ $json.sessionId }}', itemIndex) as string;
+	// 	}
+
+	// 	if (sessionId === '' || sessionId === undefined) {
+	// 		throw new NodeOperationError(ctx.getNode(), 'No session ID found', {
+	// 			description:
+	// 				"Expected to find the session ID in an input field called 'sessionId' (this is what the chat trigger node outputs). To use something else, change the 'Session ID' parameter",
+	// 			itemIndex,
+	// 		});
+	// 	}
+	// } else {
+	// 	sessionId = ctx.getNodeParameter(customKey, itemIndex, '') as string;
+	// 	if (sessionId === '' || sessionId === undefined) {
+	// 		throw new NodeOperationError(ctx.getNode(), 'Key parameter is empty', {
+	// 			description:
+	// 				"Provide a key to use as session ID in the 'Key' parameter or use the 'Connected Chat Trigger Node' option to use the session ID from your Chat Trigger",
+	// 			itemIndex,
+	// 		});
+	// 	}
+	// }
+
+	return 'sessionId';
+}
+
 export function logAiEvent(
 	executeFunctions: IExecuteFunctions | ISupplyDataFunctions,
 	event: AiEvent,
