@@ -32,7 +32,7 @@ import type {
 
 import { getConnectionHintNoticeField } from './sharedFields';
 import { NodeOperationMode, VectorStoreNodeConstructorArgs } from './types';
-import { getOperationModeOptions, transformDescriptionForOperationMode } from '../../utils/utils';
+import { getOperationModeOptions, transformDescriptionForOperationMode } from '../utils';
 import { handleInsertOperation, handleLoadOperation, handleRetrieveOperation, handleUpdateOperation } from '../../operations';
 import { handleRetrieveAsToolOperation } from '../../operations/retrieveAsToolOperation';
 import { Neo4jVectorStore } from '@langchain/community/vectorstores/neo4j_vector';
@@ -82,7 +82,7 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 			inputs: `={{
 			((parameters) => {
 				const mode = parameters?.mode;
-				const inputs = [{ displayName: "TODO embedding", type: "${NodeConnectionType.AiEmbedding}", required: true, maxConnections: 1}]
+				const inputs = [{ displayName: "embedding", type: "${NodeConnectionType.AiEmbedding}", required: true, maxConnections: 1}]
 
 				if (mode === 'retrieve-as-tool') {
 					return inputs;

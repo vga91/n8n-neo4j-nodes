@@ -5,8 +5,8 @@ import type { ISupplyDataFunctions, SupplyData } from 'n8n-workflow';
 //import { getMetadataFiltersValues } from '@utils/helpers';
 //import { logWrapper } from '@utils/logWrapper';
 
-import type { VectorStoreNodeConstructorArgs } from '../vector_store/VectorStoreNeo4j/types';
-import { getMetadataFiltersValues } from '../utils/utils';
+import type { VectorStoreNodeConstructorArgs } from '../n8n-utils/vector_store/types';
+import { getMetadataFiltersValues } from '../n8n-utils/utils';
 
 /**
  * Handles the 'retrieve' operation mode

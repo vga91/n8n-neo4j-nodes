@@ -7,9 +7,9 @@ import { NodeOperationError } from 'n8n-workflow';
 // import { N8nJsonLoader } from '@utils/N8nJsonLoader';
 
 //import { processDocument } from '../../processDocuments';
-import type { VectorStoreNodeConstructorArgs } from '../vector_store/VectorStoreNeo4j/types';
-import { isUpdateSupported, logAiEvent, N8nJsonLoader } from '../utils/utils';
-import { processDocument } from '../vector_store/VectorStoreNeo4j/processDocuments';
+import type { VectorStoreNodeConstructorArgs } from '../n8n-utils/vector_store/types';
+import { isUpdateSupported, logAiEvent, N8nJsonLoader } from '../n8n-utils/utils';
+import { processDocument } from '../n8n-utils/vector_store/processDocuments';
 //import { isUpdateSupported } from './utils';
 
 /**

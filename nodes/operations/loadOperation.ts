@@ -3,18 +3,21 @@ import type { Embeddings } from '@langchain/core/embeddings';
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 
 
-import type { VectorStoreNodeConstructorArgs } from '../vector_store/VectorStoreNeo4j/types';
-import { getMetadataFiltersValues, logAiEvent } from '../utils/utils';
-import { Neo4jVectorStore } from '@langchain/community/vectorstores/neo4j_vector';
-import { Neo4jVectorStoreExtended } from '../vector_store/VectorStoreNeo4j/VectorStoreNeo4j.node';
+import type { VectorStoreNodeConstructorArgs } from '../n8n-utils/vector_store/types';
+import { getMetadataFiltersValues, logAiEvent } from '../n8n-utils/utils';
+//import { Neo4jVectorStore } from '@langchain/community/vectorstores/neo4j_vector';
+import { VectorStore } from '@langchain/core/vectorstores';
 
 /**
  * Handles the 'load' operation mode
  * Searches the vector store for documents similar to a query
  */
-export async function handleLoadOperation(
+// export async function handleLoadOperation(
+// 	context: IExecuteFunctions,
+// 	args: VectorStoreNodeConstructorArgs<Neo4jVectorStore>,
+export async function handleLoadOperation<T extends VectorStore = VectorStore>(
 	context: IExecuteFunctions,
-	args: VectorStoreNodeConstructorArgs<Neo4jVectorStore>,
+	args: VectorStoreNodeConstructorArgs<T>,
 	embeddings: Embeddings,
 	itemIndex: number,
 ): Promise<INodeExecutionData[]> {
@@ -40,16 +43,17 @@ export async function handleLoadOperation(
 		) as boolean;
 
 		// Embed the prompt to prepare for vector similarity search
-		const embeddedPrompt = await embeddings.embedQuery(prompt);
+		//const embeddedPrompt = await embeddings.embedQuery(prompt);
 
-		console.log('Load operation started1', embeddedPrompt);
+		// console.log('Load operation started1', embeddedPrompt);
 
-		console.log('vectorStore.driver', (vectorStore as unknown as Neo4jVectorStoreExtended));
+		// console.log('vectorStore.driver', (vectorStore as unknown as Neo4jVectorStoreExtended));
 		// Get the most similar documents to the embedded prompt
 		//const docs = await vectorStore.similaritySearchVectorWithScore(embeddedPrompt, topK, filter ? JSON.stringify(filter) : '{}');
+		// const docs = await vectorStore.similaritySearchWithScore(prompt, topK);
 		const docs = await vectorStore.similaritySearchWithScore(prompt, topK);
 
-		console.log('Retrieved documents:', docs);
+		console.log('Retrieved documents: AAAAAA');
 
 		// Format the documents for the output
 		const serializedDocs = docs.map(([doc, score]) => {

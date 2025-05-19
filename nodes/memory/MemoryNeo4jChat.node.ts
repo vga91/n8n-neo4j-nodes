@@ -1,16 +1,21 @@
 import { Neo4jChatMessageHistory } from '@langchain/community/stores/message/neo4j';
-import { BufferWindowMemory } from 'langchain/memory';
+import { BufferMemory, BufferWindowMemory } from 'langchain/memory';
 //import { BaseChatMemory, BufferMemory, BufferWindowMemory } from 'langchain/memory';
 // import { getSessionId } from '@utils/helpers';
 // import { logWrapper } from '@utils/logWrapper';
 import type { ISupplyDataFunctions, INodeType, INodeTypeDescription, SupplyData } from 'n8n-workflow';
 import { NodeConnectionType } from 'n8n-workflow';
-import { getSessionId } from '../utils/utils';
-import { Neo4jCredentials } from '../../credentials/Neo4jCredentialsApi.credentials';
+import { getSessionId } from '../n8n-utils/utils';
 // import neo4j from 'neo4j-driver';
-import {name} from '../../common-utils';
+import {getNeo4jCredentials} from '../../common-utils';
+import { getConnectionHintNoticeField } from '../n8n-utils/vector_store/sharedFields';
 // import neo4j from 'neo4j-driver';
 
+import {
+	sessionIdOption,
+	sessionKeyProperty,
+	expressionSessionKeyProperty,
+} from '../n8n-utils/descriptions';
 
 export class MemoryNeo4jChat implements INodeType {
 	description: INodeTypeDescription = {
@@ -33,6 +38,10 @@ export class MemoryNeo4jChat implements INodeType {
 		outputs: [NodeConnectionType.AiMemory],
 		outputNames: ['Memory'],
 		properties: [
+			getConnectionHintNoticeField([NodeConnectionType.AiAgent]),
+			sessionIdOption,
+			expressionSessionKeyProperty(1.2),
+			sessionKeyProperty,
 			{
 				displayName: 'Session Key',
 				name: 'sessionKey',
@@ -40,8 +49,8 @@ export class MemoryNeo4jChat implements INodeType {
 				default: 'default',
 			},
 			{
-				displayName: 'Context Window Length',
-				name: 'contextWindowLength',
+				displayName: 'this Window Length',
+				name: 'thisWindowLength',
 				type: 'number',
 				default: 5,
 			},
@@ -69,101 +78,39 @@ export class MemoryNeo4jChat implements INodeType {
 
 		const sessionNodeLabel = this.getNodeParameter('sessionNodeLabel', itemIndex, 'Session') as string;
 		const messageNodeLabel = this.getNodeParameter('messageNodeLabel', itemIndex, 'Message') as string;
-
-		// // const driver = neo4j.driver( "bolt://localhost:7687", 
-		// const driver = neo4j.driver(
-		// 	"bolt://127.0.0.1:7687",
-		// 	neo4j.auth.basic("neo4j", "apoc12345"),
-		// 	{ encrypted: false }
-		//   );
-		// // const driver = neo4j.driver(
-		// // 	credentials.url,
-		// // 	neo4j.auth.basic(credentials?.username ?? 'neo4j', credentials.password),
-		// // 	{ encrypted: 'ENCRYPTION_OFF' }
-		// // );
-		// // console.debug('driver', driver.session());
-
-		// console.log('driver closed1 ');
-		// try {
-		// 	await driver.session().run('CREATE (n:CICCIO) RETURN n');
-		// } catch (error) {
-		// 	console.error('Error creating node:', error);
-		// }
+	
+		const credentials = await getNeo4jCredentials(this);
 		
-
-		// console.log('driver closed2 ');
-		// await driver.close();
-
-		// console.log('driver closed3');
-
-		// return {
-		// 	response: null,
-		// };
-		
-		console.log('supplyDataaa..');
-		console.log('supplyData', this.getNode().typeVersion);
-		const credentials = await this.getCredentials<Neo4jCredentials>(name);
-		console.debug('credenzialiiii', credentials);
-		console.debug('itemIndex', itemIndex);
-		// console.debug('this', this);
 		const sessionId = getSessionId(this, itemIndex);
-		console.debug('sessionId', sessionId);
-		const contextWindowLength = this.getNodeParameter('contextWindowLength', itemIndex) as number;
-		console.debug('contextWindowLength', contextWindowLength);
-		// const driver = neo4j.driver(
-		// 	credentials.boltUrl,
-		// 	neo4j.auth.basic(credentials.username, credentials.password),
-		// );
-
-		// todo - write https://github.com/vga91/n8n-neo4j-nodes/issues/1
-		const url = credentials.url.replace('localhost', '127.0.0.1');
+		const thisWindowLength = this.getNodeParameter('thisWindowLength', itemIndex) as number;
+	
 		const chatHistory = new Neo4jChatMessageHistory({
 			sessionId,
-			// todo - how to change it?
-			sessionNodeLabel,//: 'Session',
-			// todo - how to change it?
-			messageNodeLabel,//: 'Message',
-			url,//: url,
-			// TODO - check it
-			username: credentials?.username ?? 'neo4j',
+			sessionNodeLabel,
+			messageNodeLabel,
+			url: credentials.url,
+			username: credentials.username,
 			password: credentials.password,
-			windowSize: contextWindowLength,
+			windowSize: thisWindowLength,
 		});
 
-		console.log("credentials.url", credentials.url);
-		console.log("credentials.username", credentials?.username ?? 'neo4j');
-		console.log("credentials.password", credentials.password);
+		const memClass = this.getNode().typeVersion < 1.1 ? BufferMemory : BufferWindowMemory;
+		const kOptions =
+		this.getNode().typeVersion < 1.1
+				? {}
+				: { k: thisWindowLength};
 
-
-		chatHistory.verifyConnectivity().then((res) => {
-			console.debug('verifyConnectivity', res);
-		}).catch((err) => {	
-			console.debug('verifyConnectivity error', err);
-		}
-		);
-
-		// console.debug('chatHistory', chatHistory);
-
-		// TODO - DECOMMENT
-		// const memClass = this.getNode().typeVersion < 1.1 ? BufferMemory : BufferWindowMemory;
-		// const kOptions =
-		// 	this.getNode().typeVersion < 1.1
-		// 		? {}
-		// 		: { k: this.getNodeParameter('contextWindowLength', itemIndex) };
-
-		const memory = new BufferWindowMemory({
+		const memory = new memClass({
 			memoryKey: 'chat_history',
 			chatHistory,
 			returnMessages: true,
 			inputKey: 'input',
 			outputKey: 'output',
-			// ...kOptions,
+			...kOptions,
 		});
 
-		// console.debug('memory', memory);
-
 		return {
-			response: memory,// logWrapper(memory, this),
+			response: memory,
 		};
 	}
 }

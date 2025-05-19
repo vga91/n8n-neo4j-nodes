@@ -2,12 +2,11 @@ import { AiEvent, BINARY_ENCODING, IBinaryData, IDataObject, IExecuteFunctions, 
 //import { DEFAULT_OPERATION_MODES, OPERATION_MODE_DESCRIPTIONS } from './constants';
 //import type { NodeOperationMode, VectorStoreNodeConstructorArgs } from './types';
 import type { VectorStore } from '@langchain/core/vectorstores';
-import { NodeOperationMode, VectorStoreNodeConstructorArgs } from '../vector_store/VectorStoreNeo4j/types';
+import { NodeOperationMode, VectorStoreNodeConstructorArgs } from './vector_store/types';
 import type { TextSplitter } from '@langchain/textsplitters';
 import { Document } from '@langchain/core/documents';
 import { JSONLoader } from 'langchain/document_loaders/fs/json';
 import { TextLoader } from 'langchain/document_loaders/fs/text';
-import { NodeOperationError } from 'n8n-workflow';
 
 import { CSVLoader } from '@langchain/community/document_loaders/fs/csv';
 import { DocxLoader } from '@langchain/community/document_loaders/fs/docx';
@@ -16,6 +15,10 @@ import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
 import { createWriteStream } from 'fs';
 import { file as tmpFile, type DirectoryResult } from 'tmp-promise';
 import { pipeline } from 'stream/promises';
+import type { BaseChatMessageHistory } from '@langchain/core/chat_history';
+import type { Tool } from '@langchain/core/tools';
+import type { BaseChatMemory } from 'langchain/memory';
+import { NodeOperationError } from 'n8n-workflow';
 
 // helpers
 export function getSessionId(
@@ -25,41 +28,69 @@ export function getSessionId(
 	autoSelect = 'fromInput',
 	customKey = 'sessionKey',
 ) {
-	// TODO - restore 
 
-	// let sessionId = '';
-	// const selectorType = ctx.getNodeParameter(selectorKey, itemIndex) as string;
+	let sessionId = '';
+	const selectorType = ctx.getNodeParameter(selectorKey, itemIndex) as string;
+	console.log('Selector type:', selectorType);
 
-	// if (selectorType === autoSelect) {
-	// 	// If memory node is used in webhook like node(like chat trigger node), it doesn't have access to evaluateExpression
-	// 	// so we try to extract sessionId from the bodyData
-	// 	if ('getBodyData' in ctx) {
-	// 		const bodyData = ctx.getBodyData() ?? {};
-	// 		sessionId = bodyData.sessionId as string;
-	// 	} else {
-	// 		sessionId = ctx.evaluateExpression('{{ $json.sessionId }}', itemIndex) as string;
-	// 	}
+	if (selectorType === autoSelect) {
+		console.log('Selector type is autoSelect');
+		// If memory node is used in webhook like node(like chat trigger node), it doesn't have access to evaluateExpression
+		// so we try to extract sessionId from the bodyData
+		if ('getBodyData' in ctx) {
+			const bodyData = ctx.getBodyData() ?? {};
+			sessionId = bodyData.sessionId as string;
+		} else {
+			sessionId = ctx.evaluateExpression('{{ $json.sessionId }}', itemIndex) as string;
+		}
 
-	// 	if (sessionId === '' || sessionId === undefined) {
-	// 		throw new NodeOperationError(ctx.getNode(), 'No session ID found', {
-	// 			description:
-	// 				"Expected to find the session ID in an input field called 'sessionId' (this is what the chat trigger node outputs). To use something else, change the 'Session ID' parameter",
-	// 			itemIndex,
-	// 		});
-	// 	}
-	// } else {
-	// 	sessionId = ctx.getNodeParameter(customKey, itemIndex, '') as string;
-	// 	if (sessionId === '' || sessionId === undefined) {
-	// 		throw new NodeOperationError(ctx.getNode(), 'Key parameter is empty', {
-	// 			description:
-	// 				"Provide a key to use as session ID in the 'Key' parameter or use the 'Connected Chat Trigger Node' option to use the session ID from your Chat Trigger",
-	// 			itemIndex,
-	// 		});
-	// 	}
-	// }
+		if (sessionId === '' || sessionId === undefined) {
+			throw new NodeOperationError(ctx.getNode(), 'No session ID found', {
+				description:
+					"Expected to find the session ID in an input field called 'sessionId' (this is what the chat trigger node outputs). To use something else, change the 'Session ID' parameter",
+				itemIndex,
+			});
+		}
+	} else {
+		console.log('Selector type is custom');
+		sessionId = ctx.getNodeParameter(customKey, itemIndex, '') as string;
+		console.log('Session ID:', sessionId);
+		if (sessionId === '' || sessionId === undefined) {
+			throw new NodeOperationError(ctx.getNode(), 'Key parameter is empty', {
+				description:
+					"Provide a key to use as session ID in the 'Key' parameter or use the 'Connected Chat Trigger Node' option to use the session ID from your Chat Trigger",
+				itemIndex,
+			});
+		}
+	}
 
-	return 'sessionId';
+	return sessionId;
 }
+
+function hasMethods<T>(obj: unknown, ...methodNames: Array<string | symbol>): obj is T {
+	return methodNames.every(
+		(methodName) =>
+			typeof obj === 'object' &&
+			obj !== null &&
+			methodName in obj &&
+			typeof (obj as Record<string | symbol, unknown>)[methodName] === 'function',
+	);
+}
+
+export function isBaseChatMemory(obj: unknown) {
+	return hasMethods<BaseChatMemory>(obj, 'loadMemoryVariables', 'saveContext');
+}
+
+export function isBaseChatMessageHistory(obj: unknown) {
+	return hasMethods<BaseChatMessageHistory>(obj, 'getMessages', 'addMessage');
+}
+
+export function isToolsInstance(model: unknown): model is Tool {
+	const namespace = (model as Tool)?.lc_namespace ?? [];
+
+	return namespace.includes('tools');
+}
+
 
 export function logAiEvent(
 	executeFunctions: IExecuteFunctions | ISupplyDataFunctions,
