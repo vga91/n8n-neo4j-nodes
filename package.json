@@ -41,9 +41,7 @@
     ],
     "nodes": [
       "dist/nodes/vector_store/VectorStoreNeo4j/VectorStoreNeo4j.node.js",
-      "dist/nodes/memory/MemoryNeo4jChat.node.js",
-
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/memory/MemoryNeo4jChat.node.js"
     ]
   },
   "devDependencies": {

@@ -1,15 +1,10 @@
 import { Neo4jChatMessageHistory } from '@langchain/community/stores/message/neo4j';
 import { BufferMemory, BufferWindowMemory } from 'langchain/memory';
-//import { BaseChatMemory, BufferMemory, BufferWindowMemory } from 'langchain/memory';
-// import { getSessionId } from '@utils/helpers';
-// import { logWrapper } from '@utils/logWrapper';
 import type { ISupplyDataFunctions, INodeType, INodeTypeDescription, SupplyData } from 'n8n-workflow';
 import { NodeConnectionType } from 'n8n-workflow';
 import { getSessionId } from '../n8n-utils/utils';
-// import neo4j from 'neo4j-driver';
-import {getNeo4jCredentials} from '../../common-utils';
+import { getNeo4jCredentials } from '../../common-utils';
 import { getConnectionHintNoticeField } from '../n8n-utils/vector_store/sharedFields';
-// import neo4j from 'neo4j-driver';
 
 import {
 	sessionIdOption,
@@ -78,12 +73,12 @@ export class MemoryNeo4jChat implements INodeType {
 
 		const sessionNodeLabel = this.getNodeParameter('sessionNodeLabel', itemIndex, 'Session') as string;
 		const messageNodeLabel = this.getNodeParameter('messageNodeLabel', itemIndex, 'Message') as string;
-	
+
 		const credentials = await getNeo4jCredentials(this);
-		
+
 		const sessionId = getSessionId(this, itemIndex);
 		const thisWindowLength = this.getNodeParameter('thisWindowLength', itemIndex) as number;
-	
+
 		const chatHistory = new Neo4jChatMessageHistory({
 			sessionId,
 			sessionNodeLabel,
@@ -96,9 +91,9 @@ export class MemoryNeo4jChat implements INodeType {
 
 		const memClass = this.getNode().typeVersion < 1.1 ? BufferMemory : BufferWindowMemory;
 		const kOptions =
-		this.getNode().typeVersion < 1.1
+			this.getNode().typeVersion < 1.1
 				? {}
-				: { k: thisWindowLength};
+				: { k: thisWindowLength };
 
 		const memory = new memClass({
 			memoryKey: 'chat_history',
@@ -110,6 +105,7 @@ export class MemoryNeo4jChat implements INodeType {
 		});
 
 		return {
+			// TODO: it should be `response: logWrapper(memory, this)`
 			response: memory,
 		};
 	}

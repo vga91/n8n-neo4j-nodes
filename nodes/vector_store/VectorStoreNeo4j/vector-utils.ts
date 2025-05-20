@@ -1,5 +1,6 @@
 import { IExecuteFunctions, INodeProperties, ISupplyDataFunctions } from "n8n-workflow";
 import { getNeo4jCredentials, Neo4jVectorStoreArgs } from "../../../common-utils";
+import { IndexType, SearchType } from "@langchain/community/vectorstores/neo4j_vector";
 
 const embeddingFieldName = 'embedding';
 const embeddingFieldDefault = 'embedding';
@@ -45,43 +46,130 @@ const indexNameField: INodeProperties = {
     placeholder: 'vector',
 }
 
+const keywodkIndexNameFieldName = 'keywordIndexName';
+const keywordIndexNameFieldDefault = 'keyword';
+const keywordIndexNameField: INodeProperties = {
+    displayName: 'Keyword Index Name',
+    name: keywodkIndexNameFieldName,
+    type: 'string',
+    default: keywordIndexNameFieldDefault,
+    description: 'The name of the keyword index to use',
+    placeholder: 'keyword'
+}
+
+const preDeleteCollectionFieldName = 'preDeleteCollection';
+const preDeleteCollectionFieldDefault = false;
+const preDeleteCollectionField: INodeProperties = {
+    displayName: 'Pre Delete Collection',
+    name: preDeleteCollectionFieldName,
+    type: 'boolean',
+    default: preDeleteCollectionFieldDefault,
+    description: 'Whether to delete the collection before inserting new data',
+    placeholder: 'false',
+}
+
+const databaseFieldName = 'database';
+const databaseFieldDefault = 'neo4j';
+const databaseField: INodeProperties = {
+    displayName: 'Database',
+    name: databaseFieldName,
+    type: 'string',
+    default: databaseFieldDefault,
+    description: 'The name of the database to use',
+    placeholder: 'neo4j'
+}
+
+// export type SearchType = "vector" | "hybrid";
+const searchTypeFieldName = 'searchType';
+const searchTypeFieldDefault = "vector";
+const searchTypeField: INodeProperties = {
+    displayName: 'Search Type',
+    name: searchTypeFieldName,
+    type: 'options',
+    options: [
+        {
+            name: 'Vector',
+            value: "vector",
+            description: 'Use vector search',
+        },
+        {
+            name: 'Hybrid',
+            value: "hybrid",
+            description: 'Use hybrid search',
+        },
+    ],
+    default: searchTypeFieldDefault,
+    description: 'The type of search to use',
+    placeholder: 'vector',
+}
 
 
-// todo - CHECK if more fields are needed
+const indexTypeFieldName = 'indexType';
+const indexTypeFieldDefault = "NODE";
+const indexTypeField: INodeProperties = {
+    displayName: 'Index Type',
+    name: indexTypeFieldName,
+    type: 'options',
+    options: [
+        {
+            name: 'Node',
+            value: "NODE",
+            description: 'Use node index',
+        },
+        {
+            name: 'Relationship',
+            value: "RELATIONSHIP",
+            description: 'Use relationship index',
+        },
+    ],
+    default: indexTypeFieldDefault,
+    description: 'The type of index to use',
+    placeholder: 'NODE',
+}
+
+const createIdIndexFieldName = 'createIdIndex';
+const createIdIndexFieldDefault = true;
+const createIdIndexField: INodeProperties = {
+    displayName: 'Create ID Index',
+    name: createIdIndexFieldName,
+    type: 'boolean',
+    default: createIdIndexFieldDefault,
+    description: 'Whether to create an ID index for the entity',
+    placeholder: 'true',
+}
+
 export const sharedFields: INodeProperties[] = [
     labelField,
     textField,
     indexNameField,
-    embeddingField
+    embeddingField,
+    keywordIndexNameField,
+    databaseField,
+    searchTypeField,
+    indexTypeField,
 ];
 
-const embeddingDimensions: INodeProperties = {
-    displayName: 'Embedding Dimensions',
-    name: 'embeddingDimensions',
-    type: 'number',
-    default: 1536,
-    description: 'The dimension of the embedding',
-};
-
-// todo - CHECK if more fields are needed
+// todo - CHECK if options fields is needed
 export const insertFields: INodeProperties[] = [
-    {
-        displayName: 'Options',
-        name: 'options',
-        type: 'collection',
-        placeholder: 'Add Option',
-        default: {},
-        options: [
-            embeddingDimensions,
-            {
-                displayName: 'Clear Collection',
-                name: 'clearCollection',
-                type: 'boolean',
-                default: false,
-                description: 'Whether to clear the collection before inserting new data',
-            },
-        ],
-    },
+    createIdIndexField,
+    preDeleteCollectionField,
+    // {
+    //     displayName: 'Options',
+    //     name: 'options',
+    //     type: 'collection',
+    //     placeholder: 'Add Option',
+    //     default: {},
+    //     options: [
+    //         embeddingDimensions,
+    //         {
+    //             displayName: 'Clear Collection',
+    //             name: 'clearCollection',
+    //             type: 'boolean',
+    //             default: false,
+    //             description: 'Whether to clear the collection before inserting new data',
+    //         },
+    //     ],
+    // },
 ];
 
 export const retrievalQueryName = 'retrievalQuery';
@@ -108,8 +196,26 @@ export const getNeo4jCommonParameters = async (context: IExecuteFunctions | ISup
     const nodeLabel = context.getNodeParameter(labelFieldName, itemIndex, labelFieldDefault) as string;
     const textNodeProperty = context.getNodeParameter(textFieldName, itemIndex, textFieldDefault) as string;
     const indexName = context.getNodeParameter(indexNameFieldName, itemIndex, indexNameFieldDefault) as string;
+    const keywordIndexName = context.getNodeParameter(keywodkIndexNameFieldName, itemIndex, keywordIndexNameFieldDefault) as string;
+    const database = context.getNodeParameter(databaseFieldName, itemIndex, databaseFieldDefault) as string;
+    const searchType = context.getNodeParameter(searchTypeFieldName, itemIndex, searchTypeFieldDefault) as SearchType;
+    const indexType = context.getNodeParameter(indexTypeFieldName, itemIndex, indexTypeFieldDefault) as IndexType;
+    const preDeleteCollection = context.getNodeParameter(preDeleteCollectionFieldName, itemIndex, preDeleteCollectionFieldDefault) as boolean;
+    const createIdIndex = context.getNodeParameter(createIdIndexFieldName, itemIndex, createIdIndexFieldDefault) as boolean;
+    const retrievalQuery = context.getNodeParameter(retrievalQueryName, itemIndex, retievalQueryDefault) as string;
 
-    // TODO - other params: Neo4jVectorStoreArgs
-
-    return {...credentials, embeddingNodeProperty, nodeLabel, textNodeProperty, indexName};
+    return {
+        ...credentials,
+        embeddingNodeProperty,
+        nodeLabel,
+        textNodeProperty,
+        indexName,
+        database,
+        keywordIndexName,
+        searchType,
+        indexType,
+        preDeleteCollection,
+        createIdIndex,
+        retrievalQuery
+    };
 }

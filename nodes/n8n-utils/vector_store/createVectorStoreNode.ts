@@ -33,8 +33,8 @@ import type {
 import { getConnectionHintNoticeField } from './sharedFields';
 import { NodeOperationMode, VectorStoreNodeConstructorArgs } from './types';
 import { getOperationModeOptions, transformDescriptionForOperationMode } from '../utils';
-import { handleInsertOperation, handleLoadOperation, handleRetrieveOperation, handleUpdateOperation } from '../../operations';
-import { handleRetrieveAsToolOperation } from '../../operations/retrieveAsToolOperation';
+import { handleInsertOperation, handleLoadOperation, handleRetrieveOperation, handleUpdateOperation } from '../operations';
+import { handleRetrieveAsToolOperation } from '../operations/retrieveAsToolOperation';
 import { Neo4jVectorStore } from '@langchain/community/vectorstores/neo4j_vector';
 
 
@@ -245,8 +245,6 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 		 */
 		async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 
-			// todo ???? - check others, doesn't connect
-
 			const mode = this.getNodeParameter('mode', 0) as NodeOperationMode;
 
 			// Get the embeddings model connected to this node
@@ -302,7 +300,6 @@ export const createVectorStoreNode = <T extends VectorStore = VectorStore>(
 				return await handleRetrieveOperation(this, args, embeddings, itemIndex);
 			}
 
-			// TODO - check this
 			if (mode === 'retrieve-as-tool') {
 				return await handleRetrieveAsToolOperation(this, args, embeddings, itemIndex);
 			}

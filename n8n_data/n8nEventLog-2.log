@@ -1,0 +1,2 @@
+{"__type":"$$EventMessageAudit","id":"3aae9cd6-fe63-46d0-8ba1-ae7025218459","ts":"2025-05-20T14:53:44.889+00:00","eventName":"n8n.audit.workflow.deleted","message":"n8n.audit.workflow.deleted","payload":{"userId":"3be44788-570d-47aa-bd97-08adfd85622a","_email":"giuseppe.villani@larus-ba.it","_firstName":"giuseppe","_lastName":"villani","globalRole":"global:owner","workflowId":"srOnR8PAY3u4RSwb"}}
+{"__type":"$$EventMessageConfirm","confirm":"3aae9cd6-fe63-46d0-8ba1-ae7025218459","ts":"2025-05-20T14:53:44.913+00:00","source":{"id":"0","name":"eventBus"}}

@@ -6,4 +6,5 @@ dist
 npm-debug.log*
 yarn.lock
 .vscode
-.n8n/
+.n8n
+n8n_data

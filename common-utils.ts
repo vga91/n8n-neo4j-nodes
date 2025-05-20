@@ -22,7 +22,7 @@ export interface Neo4jVectorStoreArgs {
 }
 
 /**
- * Repleace if present "localhost" with "127.0.0.1" since with "localhost" we have the following error:
+ * Replace if present "localhost" with "127.0.0.1" since with "localhost" we have the following error:
  * Failed to connect to server. Please ensure that your database is listening on the correct host and port and that you have compatible encryption settings both on Neo4j server and driver. 
  * Note that the default encryption setting has changed in Neo4j 4.0.
  * Caused by: connect ECONNREFUSED ::1:7687',

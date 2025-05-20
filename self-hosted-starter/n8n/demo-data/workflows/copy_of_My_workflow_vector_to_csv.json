@@ -1,0 +1,263 @@
+{
+  "name": "copy of My workflow vector to csv",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4fc8f49b-e888-4633-bdef-486ade3a6a7b",
+      "name": "When chat message received",
+      "webhookId": "0f453467-e47a-4dc7-aebe-2fb329b9b0c7"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        280,
+        340
+      ],
+      "id": "a05ae7dd-dd26-4daf-ba03-624a5ba9e4bd",
+      "name": "Embeddings Ollama",
+      "credentials": {
+        "ollamaApi": {
+          "id": "co2GvRcO1gapYGa8",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        560,
+        280
+      ],
+      "id": "f19f7042-b531-4055-bcda-e5dab4f63a31",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        460,
+        620
+      ],
+      "id": "e0c51746-43f3-49f5-b252-dd93303def0c",
+      "name": "Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "mode": "load",
+        "prompt": "ajeje"
+      },
+      "type": "CUSTOM.vectorStoreNeo4j",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        0
+      ],
+      "id": "0de8ef90-b2d5-4e0d-9797-5e7701be49df",
+      "name": "Neo4j Vector Store get",
+      "credentials": {
+        "neo4j": {
+          "id": "BGoN7ykl79vUxhpQ",
+          "name": "Neo4j Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert"
+      },
+      "type": "CUSTOM.vectorStoreNeo4j",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        0
+      ],
+      "id": "1cd3bc02-9f2d-4565-81af-795fde78f05f",
+      "name": "Neo4j Vector Store populate",
+      "credentials": {
+        "neo4j": {
+          "id": "BGoN7ykl79vUxhpQ",
+          "name": "Neo4j Credentials account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/home/node/embedding.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2440,
+        60
+      ],
+      "id": "95962e67-c310-49e5-aa48-3735fa2c326c",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "=data",
+        "options": {
+          "delimiter": ",",
+          "headerRow": true
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1980,
+        0
+      ],
+      "id": "56f7dfe4-9a8c-4cd4-bb71-4c2afca510de",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f0ce46c0-e5ed-467a-abe4-a6b0b791f233",
+              "name": "document.metadata.text",
+              "value": "={{ $json.document.metadata.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1280,
+        0
+      ],
+      "id": "ebe2779e-0165-4b24-a366-1272cd8e170e",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Neo4j Vector Store populate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Neo4j Vector Store populate",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Neo4j Vector Store get",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Neo4j Vector Store populate",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Neo4j Vector Store get": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Neo4j Vector Store populate": {
+      "main": [
+        [
+          {
+            "node": "Neo4j Vector Store get",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "38253def-ce07-48ea-83bd-af34ce19cbc6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "4dTMJucvAgAZD3CV",
+  "tags": []
+}
