@@ -1,10 +1,16 @@
 ![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
 
-# n8n-neo4j-nodes
+# Neo4j nodes and credentials for n8n and self-hosted starter
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](n8n.io). It includes the node linter and other dependencies.
+This repo contains Neo4j custom nodes. It includes the node linter and other dependencies.
 
 To make this custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+
+It also contains a Docker Compose file to initialize a comprehensive self-hosted local AI and low-code development environment.
+It leverages:
+- [**Ollama**](https://ollama.com/): a Cross-platform LLM platform to install
+and run the latest local LLMs 
+- [**SQLite**](https://sqlite.org/): to store internal n8n data, such as Workflow definitions, credentials, user accounts, settings, etc..
 
 
 ### What’s included
