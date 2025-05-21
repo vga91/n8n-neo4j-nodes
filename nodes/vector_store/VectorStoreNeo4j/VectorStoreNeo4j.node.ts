@@ -20,13 +20,13 @@ export class VectorStoreNeo4j extends createVectorStoreNode<Neo4jVectorStore>({
 				required: true,
 			},
 		],
-		operationModes: ['load', 'insert', 'retrieve', 'retrieve-as-tool'],
+		operationModes: ['load', 'insert', 'update', 'retrieve', 'retrieve-as-tool'],
 	},
 	sharedFields,
 	insertFields,
 	loadFields,
-	retrieveFields: sharedFields,
-	updateFields: insertFields,
+	retrieveFields: loadFields,
+	updateFields: loadFields,
 
 	methods: {
 		listSearch: {
@@ -65,8 +65,6 @@ export class VectorStoreNeo4j extends createVectorStoreNode<Neo4jVectorStore>({
 			embeddings,
 			params
 		);
-
-		await console.log('finish');
 	},
 }) { }
 

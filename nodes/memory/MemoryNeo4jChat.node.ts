@@ -44,8 +44,8 @@ export class MemoryNeo4jChat implements INodeType {
 				default: 'default',
 			},
 			{
-				displayName: 'this Window Length',
-				name: 'thisWindowLength',
+				displayName: 'Window Length',
+				name: 'windowLength',
 				type: 'number',
 				default: 5,
 			},
@@ -77,7 +77,7 @@ export class MemoryNeo4jChat implements INodeType {
 		const credentials = await getNeo4jCredentials(this);
 
 		const sessionId = getSessionId(this, itemIndex);
-		const thisWindowLength = this.getNodeParameter('thisWindowLength', itemIndex) as number;
+		const windowLength = this.getNodeParameter('windowLength', itemIndex) as number;
 
 		const chatHistory = new Neo4jChatMessageHistory({
 			sessionId,
@@ -86,14 +86,14 @@ export class MemoryNeo4jChat implements INodeType {
 			url: credentials.url,
 			username: credentials.username,
 			password: credentials.password,
-			windowSize: thisWindowLength,
+			windowSize: windowLength,
 		});
 
 		const memClass = this.getNode().typeVersion < 1.1 ? BufferMemory : BufferWindowMemory;
 		const kOptions =
 			this.getNode().typeVersion < 1.1
 				? {}
-				: { k: thisWindowLength };
+				: { k: windowLength };
 
 		const memory = new memClass({
 			memoryKey: 'chat_history',

@@ -33,11 +33,7 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
-    ],
-    "workflows": [
-      "dist/workflows/2752-hr-and-it-helpdesk-chatbot-with-audio-transcription.json"
+      "dist/credentials/Neo4jCredentialsApi.credentials.js"
     ],
     "nodes": [
       "dist/nodes/vector_store/VectorStoreNeo4j/VectorStoreNeo4j.node.js",

@@ -143,13 +143,11 @@ export const sharedFields: INodeProperties[] = [
     textField,
     indexNameField,
     embeddingField,
-    keywordIndexNameField,
     databaseField,
-    searchTypeField,
     indexTypeField,
 ];
 
-// todo - CHECK if options fields is needed
+// TODO - check if migth be worth an 'options' field
 export const insertFields: INodeProperties[] = [
     createIdIndexField,
     preDeleteCollectionField,
@@ -157,17 +155,10 @@ export const insertFields: INodeProperties[] = [
     //     displayName: 'Options',
     //     name: 'options',
     //     type: 'collection',
-    //     placeholder: 'Add Option',
+    //     placeholder: '...',
     //     default: {},
     //     options: [
-    //         embeddingDimensions,
-    //         {
-    //             displayName: 'Clear Collection',
-    //             name: 'clearCollection',
-    //             type: 'boolean',
-    //             default: false,
-    //             description: 'Whether to clear the collection before inserting new data',
-    //         },
+    //         field1, field2, ...
     //     ],
     // },
 ];
@@ -181,11 +172,12 @@ const retrieveField: INodeProperties = {
     default: retievalQueryDefault,
     description: 'The query to use for retrieval, e.g. "return node.text AS text, properties(node) AS metadata, score". See <a href="https://js.langchain.com/docs/integrations/vectorstores/neo4jvector/#use-retrievalquery-parameter-to-customize-responses">Neo4j documentation</a> for more details.',
     placeholder: 'return node.text AS text, properties(node) AS metadata, score',
-    //displayOptions: {
 }
 
 export const loadFields: INodeProperties[] = [
-    retrieveField
+    retrieveField,
+    keywordIndexNameField,
+    searchTypeField,
 ]
 
 

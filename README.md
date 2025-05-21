@@ -1,10 +1,37 @@
 ![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
 
-# n8n-nodes-starter
+# n8n-neo4j-nodes
 
 This repo contains example nodes to help you get started building your own custom integrations for [n8n](n8n.io). It includes the node linter and other dependencies.
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+To make this custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+
+
+### What’s included
+
+1. Neo4j Vector Store node 
+
+You can use this node to interact with the Neo4j vector properties. 
+
+You can insert documents into a vector table, get documents from a vector table, retrieve documents to provide them to a retriever connected to a chain, or connect directly to an agent as a tool.
+
+See [here](docs/vector-store.md) for more details
+
+2. Neo4j Chat Memory node
+
+You can use the Neo4j Chat Memory node to use Neo4j as a memory server for storing chat history.
+
+See [here](docs/chat-memory-store.md) for more details
+
+3. Neo4j Credentials
+
+You can use these credentials to authenticate the above nodes.
+See [here](docs/credentials.md) for more details
+
+
+
+
+
 
 ## Prerequisites
 
@@ -27,7 +54,7 @@ These are the basic steps for working with the starter. For detailed guidance on
    git clone https://github.com/vga91/n8n-neo4j-nodes.git
    ```
 2. Run `npm i` to install dependencies.
-3. Run `npm run build` to build the project.
+3. Run `rm -r dist & npm run build & npm link` to build the project.
 4. (Optional) Test your node using the docker-compose file or locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
 5. Possibly, if you start ollama locally, e.g. with `ollama serve`, if you run the `docker-compose up` command. Check the
 [Ollama homepage](https://ollama.com/) for installation instructions.
@@ -200,7 +227,5 @@ your local n8n instance.
 
 Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/creating-nodes/) for detailed information on building your own nodes.
 
-## License
 
-[MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
 

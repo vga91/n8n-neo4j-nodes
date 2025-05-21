@@ -12,9 +12,6 @@ import { VectorStore } from '@langchain/core/vectorstores';
  * Handles the 'load' operation mode
  * Searches the vector store for documents similar to a query
  */
-// export async function handleLoadOperation(
-// 	context: IExecuteFunctions,
-// 	args: VectorStoreNodeConstructorArgs<Neo4jVectorStore>,
 export async function handleLoadOperation<T extends VectorStore = VectorStore>(
 	context: IExecuteFunctions,
 	args: VectorStoreNodeConstructorArgs<T>,
@@ -42,18 +39,7 @@ export async function handleLoadOperation<T extends VectorStore = VectorStore>(
 			true,
 		) as boolean;
 
-		// Embed the prompt to prepare for vector similarity search
-		//const embeddedPrompt = await embeddings.embedQuery(prompt);
-
-		// console.log('Load operation started1', embeddedPrompt);
-
-		// console.log('vectorStore.driver', (vectorStore as unknown as Neo4jVectorStoreExtended));
-		// Get the most similar documents to the embedded prompt
-		//const docs = await vectorStore.similaritySearchVectorWithScore(embeddedPrompt, topK, filter ? JSON.stringify(filter) : '{}');
-		// const docs = await vectorStore.similaritySearchWithScore(prompt, topK);
 		const docs = await vectorStore.similaritySearchWithScore(prompt, topK);
-
-		console.log('Retrieved documents: AAAAAA');
 
 		// Format the documents for the output
 		const serializedDocs = docs.map(([doc, score]) => {
