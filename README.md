@@ -1,6 +1,6 @@
 ![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
 
-# Neo4j nodes and credentials for n8n and self-hosted starter
+# Neo4j nodes and credentials for n8n and self-hosted starter pack
 
 This repo contains Neo4j custom nodes. It includes the node linter and other dependencies.
 
