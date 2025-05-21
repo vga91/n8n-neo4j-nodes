@@ -1,5 +1,6 @@
 import {
 	IAuthenticateGeneric,
+	Icon,
 	// ICredentialTestRequest,
 	ICredentialType,
 	INodeProperties,
@@ -12,7 +13,7 @@ export class Neo4jCredentialsApi implements ICredentialType {
 	name = name;
 	displayName = 'Neo4j Credentials API';
 	documentationUrl = 'https://neo4j.com/docs/api/javascript-driver/current/';
-
+	iconUrl: 'file:neo4j-logo.svg' | undefined;
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Bolt URL',

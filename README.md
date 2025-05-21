@@ -22,14 +22,16 @@ You need the following installed on your development machine:
 
 These are the basic steps for working with the starter. For detailed guidance on creating and publishing nodes, refer to the [documentation](https://docs.n8n.io/integrations/creating-nodes/).
 
-1. [Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template repository.
-2. Clone your new repo:
+1. Clone the repo:
    ```
-   git clone https://github.com/<your organization>/<your-repo-name>.git
+   git clone https://github.com/vga91/n8n-neo4j-nodes.git
    ```
-3. Run `npm i` to install dependencies.
-4. Run `npm run build` to build the project.
-5. Test your node using the docker-compose file or locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
+2. Run `npm i` to install dependencies.
+3. Run `npm run build` to build the project.
+4. (Optional) Test your node using the docker-compose file or locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
+5. Possibly, if you start ollama locally, e.g. with `ollama serve`, if you run the `docker-compose up` command. Check the
+[Ollama homepage](https://ollama.com/) for installation instructions.
+6. See [Quick start and usage](#️-quick-start-and-usage) section
 
 ### Running n8n using Docker Compose
 
@@ -101,12 +103,31 @@ After completing the installation steps above, simply follow the steps below to 
 
 1. Open <http://localhost:5678/> in your browser to set up n8n. You’ll only
    have to do this once.
-2. Open the included workflow:
-   <http://localhost:5678/workflow/srOnR8PAY3u4RSwb>
-3. Click the **Chat** button at the bottom of the canvas, to start running the workflow.
-4. If this is the first time you’re running the workflow, you may need to wait
+
+2. Open the 1st included workflow: <http://localhost:5678/workflow/adYVK8YgDDszqcEh>
+
+   a. Click the 3 dots button on the "Neo4j Vector Store Save" button, select "Open" and change the "Credential to connect with" using `Bolt URL`, `User Name`, `Database` and `password` respectively `bolt://neo4j:7688`, `neo4j`, `neo4j` and `password1234`
+
+   b. Click the "Embeddings Ollama" 3 dots button and change the credentials (if running it locally, with `http://host.docker.internal:11434/`) and the "Model" used
+
+   a. Click the **Test workflow** button at the bottom of the canvas, to start running the workflow.
+
+   b. Click the **Chat** button at the bottom of the canvas and type a message, 
+      e.g. 'What are the company's sick leave policies?'
+
+3. Open the 2nd included workflow:
+   <http://localhost:5678/workflow/FPkRbwf9zJLYZUuc>
+
+   a. Click the **Test workflow** button
+
+   b. If this is the first time you’re running the workflow, you may need to wait
    until Ollama finishes downloading Llama3.2. You can inspect the docker
    console logs to check on the progress.
+
+   c. Click the **Chat** button at the bottom of the canvas and type a message, e.g. 'italiano'
+
+
+
 
 To open n8n at any time, visit <http://localhost:5678/> in your browser.
 
@@ -118,11 +139,6 @@ and [Information Extractor](https://docs.n8n.io/integrations/builtin/cluster-nod
 nodes. To keep everything local, just remember to use the Ollama node for your
 language model and Qdrant as your vector store.
 
-> [!NOTE]
-> This starter kit is designed to help you get started with self-hosted AI
-> workflows. While it’s not fully optimized for production environments, it
-> combines robust components that work well together for proof-of-concept
-> projects. You can customize it to meet your specific needs
 
 ## Upgrading
 
@@ -188,9 +204,3 @@ Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/
 
 [MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
 
-
-## TODO
-
-```
-npm run build & docker-compose up -d
-```
