@@ -1,0 +1,2 @@
+{"__type":"$$EventMessageAudit","id":"209abf77-4b62-4055-a39a-e13a6a4f137e","ts":"2025-05-20T12:38:17.689+00:00","eventName":"n8n.audit.user.login.success","message":"n8n.audit.user.login.success","payload":{"userId":"3dc09e49-41be-4a48-9068-5ea4a4196224","_email":"giuseppe.villani@larus-ba.it","_firstName":"giuseppe","_lastName":"villani","globalRole":"global:owner","authenticationMethod":"email"}}
+{"__type":"$$EventMessageConfirm","confirm":"209abf77-4b62-4055-a39a-e13a6a4f137e","ts":"2025-05-20T12:38:17.700+00:00","source":{"id":"0","name":"eventBus"}}
