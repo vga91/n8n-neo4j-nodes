@@ -19,7 +19,7 @@ n8n import:workflow --separate --input=<workflow-path>
 
 ## What’s included
 
-1. [**Neo4j Vector Store node**](https://github.com/vga91/n8n-neo4j-nodes/tree/master/nodes/vector_store/VectorStoreNeo4j)
+### 1. [**Neo4j Vector Store node**](https://github.com/vga91/n8n-neo4j-nodes/tree/master/nodes/vector_store/VectorStoreNeo4j)
 
 You can use this node to interact with the Neo4j vector properties. 
 
@@ -27,13 +27,13 @@ You can insert documents into a vector table, get documents from a vector table,
 
 See [here](docs/vector-store.md) for more details
 
-2. [**Neo4j Chat Memory node**](https://github.com/vga91/n8n-neo4j-nodes/tree/master/nodes/memory)
+### 2. [**Neo4j Chat Memory node**](https://github.com/vga91/n8n-neo4j-nodes/tree/master/nodes/memory)
 
 You can use the Neo4j Chat Memory node to use Neo4j as a memory server for storing chat history.
 
 See [here](docs/chat-memory-store.md) for more details
 
-3. [**Neo4j Credentials**](https://github.com/vga91/n8n-neo4j-nodes/blob/master/credentials/Neo4jCredentialsApi.credentials.ts)
+### 3. [**Neo4j Credentials**](https://github.com/vga91/n8n-neo4j-nodes/blob/master/credentials/Neo4jCredentialsApi.credentials.ts)
 
 You can use these credentials to authenticate the above nodes.
 See [here](docs/credentials.md) for more details
