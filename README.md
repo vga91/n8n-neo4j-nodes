@@ -64,7 +64,8 @@ These are the basic steps for working with the starter. For detailed guidance on
 4. (Optional) Test your node using the docker-compose file or locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
 5. Possibly, if you start ollama locally, e.g. with `ollama serve`, if you run the `docker-compose up` command. Check the
 [Ollama homepage](https://ollama.com/) for installation instructions.
-6. See [Quick start and usage](#️-quick-start-and-usage) section
+5a. Otherwise, execute the `starter.sh` script, possibly modifying it
+7. See [Quick start and usage](#️-quick-start-and-usage) section
 
 ### Running n8n using Docker Compose
 
