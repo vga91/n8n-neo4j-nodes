@@ -49,10 +49,7 @@ You need the following installed on your development machine:
 
 * [git](https://git-scm.com/downloads)
 * Node.js and pnpm. Minimum version Node 20. You can find instructions on how to install both using nvm (Node Version Manager) for Linux, Mac, and WSL [here](https://github.com/nvm-sh/nvm). For Windows users, refer to Microsoft's guide to [Install NodeJS on Windows](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows).
-* Install n8n with:
-  ```
-  npm install n8n -g
-  ```
+* Use the docker compose file OR install n8n globally with: `npm install n8n -g`.
 * Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
 
 ## Using this starter
@@ -66,10 +63,10 @@ These are the basic steps for working with the starter. For detailed guidance on
 2. Run `npm i` to install dependencies.
 3. Run `rm -r dist & npm run build & npm link` to build the project.
 4. (Optional) Test your node using the docker-compose file or locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
-5. Possibly, if you start ollama locally, e.g. with `ollama serve`, if you run the `docker-compose up` command. Check the
+5. Possibly, if you start ollama locally, e.g. with `ollama serve`, run the `docker-compose up` command. Check the
 [Ollama homepage](https://ollama.com/) for installation instructions.
-5a. Otherwise, execute the `starter.sh` script, possibly modifying it
-7. See [Quick start and usage](#️-quick-start-and-usage) section
+5a. Otherwise, execute the `starter.sh` script, possibly modifying it or follows the below sections.
+7. After that the Docker Compose images are up, go to [Quick start and usage](#️-quick-start-and-usage) section.
 
 ### Running n8n using Docker Compose
 
@@ -141,6 +138,7 @@ After completing the installation steps above, simply follow the steps below to 
 
 1. Open <http://localhost:5678/> in your browser to set up n8n. You’ll only
    have to do this once.
+   Log in with user name: "giuseppe.villani@larus-ba.it" and password "Qwerty12345".
 
 2. Open the 1st included workflow: <http://localhost:5678/workflow/adYVK8YgDDszqcEh>
 
