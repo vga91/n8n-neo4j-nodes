@@ -12,6 +12,10 @@ It leverages:
 and run the latest local LLMs 
 - [**SQLite**](https://sqlite.org/): to store internal n8n data, such as Workflow definitions, credentials, user accounts, settings, etc..
 
+If you want to use a local n8n instance, you can install this node (see here for more info) and import the workflows placed in `self-hosted-starter/n8n/demo-data/workflows/`, by executing:
+```
+n8n import:workflow --separate --input=<workflow-path>
+```
 
 ### What’s included
 
@@ -140,9 +144,9 @@ After completing the installation steps above, simply follow the steps below to 
 
 2. Open the 1st included workflow: <http://localhost:5678/workflow/adYVK8YgDDszqcEh>
 
-   a. Click the 3 dots button on the "Neo4j Vector Store Save" button, select "Open" and change the "Credential to connect with" using `Bolt URL`, `User Name`, `Database` and `password` respectively `bolt://neo4j:7688`, `neo4j`, `neo4j` and `password1234`
+   a. If needed, click the 3 dots button on the "Neo4j Vector Store Save" button, select "Open" and change the "Credential to connect with" using `Bolt URL`, `User Name`, `Database` and `password` respectively `bolt://neo4j:7687`, `neo4j`, `neo4j` and `password1234`
 
-   b. Click the "Embeddings Ollama" 3 dots button and change the credentials (if running it locally, with `http://host.docker.internal:11434/`) and the "Model" used
+   b. If needed, click the "Embeddings Ollama" 3 dots button and change the credentials (if running it locally, with `http://host.docker.internal:11434/`) and the "Model" used
 
    a. Click the **Test workflow** button at the bottom of the canvas, to start running the workflow.
 

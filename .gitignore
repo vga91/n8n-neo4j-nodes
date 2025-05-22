@@ -8,3 +8,5 @@ yarn.lock
 .vscode
 .n8n
 n8n_data/*.log
+n8n_data/binaryData/workflows/adYVK8YgDDszqcEh/executions
+n8n_data/binaryData/workflows/FPkRbwf9zJLYZUuc/executions

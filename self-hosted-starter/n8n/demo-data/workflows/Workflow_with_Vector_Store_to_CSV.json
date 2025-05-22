@@ -1,5 +1,5 @@
 {
-  "name": "Workflow with vector to csv",
+  "name": "Workflow with Vector Store to CSV.",
   "nodes": [
     {
       "parameters": {
@@ -15,8 +15,8 @@
       "name": "Embeddings Ollama",
       "credentials": {
         "ollamaApi": {
-          "id": "xHuYe0MDGOs9IpBW",
-          "name": "Local Ollama service"
+          "id": "BOUWJuC5zIYjUeue",
+          "name": "Ollama account"
         }
       }
     },
@@ -53,14 +53,14 @@
       "type": "CUSTOM.vectorStoreNeo4j",
       "typeVersion": 1.1,
       "position": [
-        1140,
-        0
+        1500,
+        180
       ],
       "id": "00e41a54-aef1-40a7-abc8-5e3fa7b26d04",
       "name": "Neo4j Vector Store get",
       "credentials": {
         "neo4j": {
-          "id": "gNv1usRjEfESzDcR",
+          "id": "52pmHFYBBzuOvaOb",
           "name": "Neo4j Credentials account"
         }
       }
@@ -79,7 +79,7 @@
       "name": "Neo4j Vector Store populate",
       "credentials": {
         "neo4j": {
-          "id": "gNv1usRjEfESzDcR",
+          "id": "52pmHFYBBzuOvaOb",
           "name": "Neo4j Credentials account"
         }
       }
@@ -93,8 +93,8 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        2460,
-        80
+        2760,
+        260
       ],
       "id": "f79e8d71-3c13-443e-a6c3-efd2635c8d04",
       "name": "Read/Write Files from Disk"
@@ -104,8 +104,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -120,
-        -40
+        -480,
+        -60
       ],
       "id": "64250fa5-2cec-4118-b8bf-61c083b28d04",
       "name": "When clicking ‘Test workflow’"
@@ -118,7 +118,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        60,
+        -220,
         -60
       ],
       "id": "32f6283a-49fc-40cd-a309-ac334777b12e",
@@ -130,7 +130,8 @@
         "extractionValues": {
           "values": [
             {
-              "cssSelector": ".langlist li a"
+              "cssSelector": ".langlist li a",
+              "returnArray": true
             }
           ]
         },
@@ -139,8 +140,8 @@
       "type": "n8n-nodes-base.html",
       "typeVersion": 1.2,
       "position": [
-        160,
-        160
+        60,
+        80
       ],
       "id": "032b9577-bc9c-4f12-8976-d8b73df9bf9b",
       "name": "HTML"
@@ -152,8 +153,8 @@
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.1,
       "position": [
-        680,
-        -140
+        1140,
+        120
       ],
       "id": "4a98ae07-c766-40c6-915d-580027665b90",
       "name": "When chat message received",
@@ -169,8 +170,8 @@
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        2060,
-        60
+        2360,
+        300
       ],
       "id": "3e7663a2-e50e-479a-b6f4-cd2ea352d0e5",
       "name": "Convert to File"
@@ -192,11 +193,60 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1620,
-        0
+        2000,
+        220
       ],
       "id": "8131b238-5a7a-4bb0-ac97-7b5a995590eb",
       "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        440
+      ],
+      "id": "70f8618e-31b5-49a1-9267-d5bf3b3010b2",
+      "name": "Embeddings Ollama1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "BOUWJuC5zIYjUeue",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Store Wikipedia language\n\n## Click \"Test workflow\" to store the Wikipedia languages, taken from HTML main page to Neo4j",
+        "height": 1040,
+        "width": 1600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -640,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "1a7d867c-1998-4a34-9623-71a58f918e5d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "\n# Retrieve results\n\n\n## Type a chat message, e.g. \"italiano\" to retrieve the result and save them in a CSV file named \"test.csv\"",
+        "height": 860,
+        "width": 1980
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1020,
+        -180
+      ],
+      "typeVersion": 1,
+      "id": "d16b8adc-5c3e-4ae5-9221-e70f73d471c0",
+      "name": "Sticky Note1"
     }
   ],
   "pinData": {},
@@ -206,11 +256,6 @@
         [
           {
             "node": "Neo4j Vector Store populate",
-            "type": "ai_embedding",
-            "index": 0
-          },
-          {
-            "node": "Neo4j Vector Store get",
             "type": "ai_embedding",
             "index": 0
           }
@@ -320,17 +365,28 @@
           }
         ]
       ]
+    },
+    "Embeddings Ollama1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Neo4j Vector Store get",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "12bbf461-afea-4878-b899-27fc15e3f578",
+  "versionId": "11f2399a-ea34-49a1-8e43-60f14e82983f",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
   },
-  "id": "FPkRbwf9zJLYZUuc",
+  "id": "FPkRbwf9zJLYZUud",
   "tags": []
 }

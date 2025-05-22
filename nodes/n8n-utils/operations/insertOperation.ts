@@ -24,7 +24,6 @@ export async function handleInsertOperation<T extends VectorStore = VectorStore>
 	args: VectorStoreNodeConstructorArgs<T>,
 	embeddings: Embeddings,
 ): Promise<INodeExecutionData[]> {
-	console.log('Insert operation started 11');
 	const nodeVersion = context.getNode().typeVersion;
 	// Get the input items and document data
 	const items = context.getInputData();
