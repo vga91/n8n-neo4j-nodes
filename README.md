@@ -17,7 +17,7 @@ If you want to use a local n8n instance, you can install this node (see here for
 n8n import:workflow --separate --input=<workflow-path>
 ```
 
-### What’s included
+## What’s included
 
 1. [**Neo4j Vector Store node**](https://github.com/vga91/n8n-neo4j-nodes/tree/master/nodes/vector_store/VectorStoreNeo4j)
 
