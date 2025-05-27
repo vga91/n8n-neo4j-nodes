@@ -144,21 +144,20 @@ After completing the installation steps above, simply follow the steps below to 
 
    a. If needed, click the 3 dots button on the "Neo4j Vector Store Save" button, select "Open" and change the "Credential to connect with" using `Bolt URL`, `User Name`, `Database` and `password` respectively `bolt://neo4j:7687`, `neo4j`, `neo4j` and `password1234`
 
-   b. If needed, click the "Embeddings Ollama" 3 dots button and change the credentials (if running it locally, with `http://host.docker.internal:11434/`) and the "Model" used
+   b. If this is the first time you’re running the workflow and you run Ollama dockerized, you may need to wait until Ollama finishes downloading it. You can inspect the docker console logs to check on the progress.
+   If needed, click the "Embeddings Ollama" 3 dots button and change the credentials (if running it locally, with `http://host.docker.internal:11434/`) and the "Model" used
 
    a. Click the **Test workflow** button at the bottom of the canvas, to start running the workflow.
 
    b. Click the **Chat** button at the bottom of the canvas and type a message, 
       e.g. 'What are the company's sick leave policies?'
 
-3. Open the 2nd included workflow:
+4. Open the 2nd included workflow:
    <http://localhost:5678/workflow/FPkRbwf9zJLYZUuc>
 
    a. Click the **Test workflow** button
 
-   b. If this is the first time you’re running the workflow, you may need to wait
-   until Ollama finishes downloading Llama3.2. You can inspect the docker
-   console logs to check on the progress.
+   b. If needed, click the "Embeddings Ollama" 3 dots button and change the credentials (if running it locally, with `http://host.docker.internal:11434/`) and the "Model" used
 
    c. Click the **Chat** button at the bottom of the canvas and type a message, e.g. 'italiano'
 
