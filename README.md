@@ -23,7 +23,7 @@ n8n import:workflow --separate --input=<workflow-path>
 
 You can use this node to interact with the Neo4j vector properties. 
 
-You can insert documents into a vector table, get documents from a vector table, retrieve documents to provide them to a retriever connected to a chain, or connect directly to an agent as a tool.
+You can insert documents into a vector property, get documents from a vector property, retrieve documents to provide them to a retriever connected to a chain, or connect directly to an agent as a tool.
 
 See [here](docs/vector-store.md) for more details
 
